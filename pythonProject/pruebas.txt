@@ -1,0 +1,5 @@
+nombre =Ricardo
+apellido1 =Barrio
+apellido2 =Perez
+curso =1
+clase =1ºB
