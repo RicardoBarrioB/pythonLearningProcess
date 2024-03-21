@@ -1,0 +1,11 @@
+{% load static %}
+
+{% if latest_entrada_list %}
+    <ul>
+    {% for entrada in latest_entrada_list %}
+        <li><a href="{% url 'agendapersonal:detalles' entrada.id %}">{{ entrada.titulo }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}

@@ -1,0 +1,13 @@
+
+{% csrf_token %}
+<fieldset>
+    <legend><h1>{{ entrada.titulo }}</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <p> {{entrada.texto}}
+</fieldset>
+
+
+
+
+
+
