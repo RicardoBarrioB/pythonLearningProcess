@@ -21,7 +21,6 @@ class AnalysisResult(models.Model):
         ('1', 'Descripción estadística'),
         ('2', 'Visualización de datos'),
         ('3', 'Análisis específico'),
-        # Agrega más tipos de análisis según sea necesario
     ]
 
     analysis_type = models.CharField(max_length=1, choices=ANALYSIS_TYPES)
