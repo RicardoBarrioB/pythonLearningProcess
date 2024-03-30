@@ -4,6 +4,8 @@ from django.contrib import admin
 
 class DataSet(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField()
+    file = models.FileField(upload_to='files/')
     upload_date = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
