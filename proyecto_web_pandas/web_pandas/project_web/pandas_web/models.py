@@ -16,7 +16,7 @@ class DataColumn(models.Model):
 
 class DataPoint(models.Model):
     column = models.ForeignKey(DataColumn, on_delete=models.CASCADE)
-    value = models.FloatField()
+    value = models.CharField(max_length=500)
 
 class AnalysisResult(models.Model):
     ANALYSIS_TYPES = [
