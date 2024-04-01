@@ -39,13 +39,12 @@ class DataSetCreateView(LoginRequiredMixin, CreateView):
         else:
             return super().post(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            context['data_column_forms'] = [DataColumnForm(prefix=str(x)) for x in range(5)]
-        else:
-            context['data_column_forms'] = [DataColumnForm(prefix=str(x)) for x in range(5)]
-        return context
+    def upload_file(self, request):
+        if request.method == 'POST':
+            file = request.FILES['json.files']
+            try:
+                data = json.load(file)
+                
 
 
 """

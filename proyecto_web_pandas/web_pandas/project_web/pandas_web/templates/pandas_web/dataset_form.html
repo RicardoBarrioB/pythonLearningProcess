@@ -47,7 +47,7 @@
 </script>
 <body>
     <h1>Formulario para cargar archivo JSON</h1>
-    <form id="uploadForm" method="post" enctype="multipart/form-data">
+    <form id="uploadForm" method="upload_file" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
     <button type="submit">Enviar Archivo</button>

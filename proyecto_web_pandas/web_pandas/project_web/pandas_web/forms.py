@@ -9,12 +9,6 @@ class DataSetForm(forms.ModelForm):
         model = DataSet
         fields = ['name', 'description', 'json_file']
 
-    def __init__(self, *args, **kwargs):
-        columns_choices = kwargs.pop('columns_choices', [])
-        super().__init__(*args, **kwargs)
-        self.fields['columns'].choices = [(col, col) for col in columns_choices]
-        print(columns_choices)
-
 
 class DataColumnForm(forms.ModelForm):
     class Meta:
