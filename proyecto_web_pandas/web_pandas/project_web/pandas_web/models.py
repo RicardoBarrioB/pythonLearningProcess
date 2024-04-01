@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 
+
 class DataSet(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -9,14 +10,17 @@ class DataSet(models.Model):
     upload_date = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
+
 class DataColumn(models.Model):
     name = models.CharField(max_length=100)
     data_type = models.CharField(max_length=50)
     data_set = models.ForeignKey(DataSet, on_delete = models.CASCADE)
 
+
 class DataPoint(models.Model):
     column = models.ForeignKey(DataColumn, on_delete=models.CASCADE)
     value = models.CharField(max_length=500)
+
 
 class AnalysisResult(models.Model):
     ANALYSIS_TYPES = [

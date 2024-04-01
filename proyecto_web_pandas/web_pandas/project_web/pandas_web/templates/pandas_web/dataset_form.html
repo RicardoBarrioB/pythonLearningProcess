@@ -4,16 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario para cargar archivo CSV</title>
+    <title>Formulario para cargar archivo JSON</title>
     <link rel="stylesheet" href="{% static 'pandas_web/styles.css' %}">
 </head>
 <body>
     <h1>Formulario para cargar archivo CSV</h1>
     <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
         {{ form.as_p }}
-        <input type="file" name="csv_file">
-        <input type="submit" value="Subir archivo">
+        <input type="file" name="json_file">
     </form>
     <a href="{% url 'data_sets' %}">Cancelar</a>
 </body>
