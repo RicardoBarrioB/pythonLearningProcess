@@ -7,7 +7,7 @@ class DataSetForm(forms.ModelForm):
 
     class Meta:
         model = DataSet
-        fields = ['name', 'description', 'file']
+        fields = ['name', 'description', 'json_file']
 
     def __init__(self, *args, **kwargs):
         columns_choices = kwargs.pop('columns_choices', [])

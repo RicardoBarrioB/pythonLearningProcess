@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from .forms import DataSetForm, DataColumnForm
 import json
+from django.http import JsonResponse, HttpResponseBadRequest
 
 
 class DataSetListView(ListView):
@@ -23,20 +24,20 @@ class DataSetCreateView(LoginRequiredMixin, CreateView):
     template_name = 'pandas_web/dataset_form.html'
     form_class = DataSetForm
     success_url = reverse_lazy('data_sets')
-    def load_file(request):
-        if request.method == 'POST' and request.FILES['json_file']:
+
+    def post(self, request, *args, **kwargs):
+        if 'json_file' in request.FILES:
             file = request.FILES['json_file']
             try:
                 data = json.load(file)
-                kwargs = super().get_form_kwargs()
-
-                columns_choices = list(data.keys())
-                kwargs['columns_choices'] = columns_choices
-                return kwargs
+                key = next(iter(data.values()), [])
+                columns_choices = list(key[0].keys())
+                return JsonResponse({'columns_choices': columns_choices})
 
             except json.JSONDecodeError:
                 return HttpResponseBadRequest("El archivo no es un JSON válido.")
-
+        else:
+            return super().post(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
