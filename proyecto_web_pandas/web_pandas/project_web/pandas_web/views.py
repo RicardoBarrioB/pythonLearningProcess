@@ -25,44 +25,74 @@ class DataSetCreateView(LoginRequiredMixin, CreateView):
     form_class = DataSetForm
     success_url = reverse_lazy('data_sets')
 
-    def post(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         if 'json_file' in request.FILES:
             file = request.FILES['json_file']
             try:
                 data = json.load(file)
                 key = next(iter(data.values()), [])
-                columns_choices = list(key[0].keys())
-                return JsonResponse({'columns_choices': columns_choices})
-
+                self.columns_choices = list(key[0].keys())
             except json.JSONDecodeError:
-                return HttpResponseBadRequest("El archivo no es un JSON válido.")
+                pass
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if hasattr(self, 'columns_choices'):
+            kwargs['columns_choices'] = self.columns_choices
+            print(self.columns_choices)
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        if 'columns' not in self.request.POST:
+            if hasattr(self, 'columns_choices'):
+                return JsonResponse({'columns_choices': self.columns_choices})
+            else:
+                return HttpResponseBadRequest("No se encontraron columnas disponibles.")
         else:
             return super().post(request, *args, **kwargs)
 
-    def upload_file(self, request):
-        if request.method == 'POST':
-            file = request.FILES['json.files']
-            try:
-                data = json.load(file)
-                
 
-
-"""
     def form_valid(self, form):
-        with transaction.atomic():
-            form.instance.uploaded_by = self.request.user
-            self.object = form.save()
-            data_column_forms = [DataColumnForm(self.request.POST, prefix=str(x)) for x in range(5)]
-            if all([data_column_form.is_valid() for data_column_form in data_column_forms]):
-                for data_column_form in data_column_forms:
-                    data_column = data_column_form.save(commit=False)
-                    data_column.data_set = self.object
-                    data_column.save()
-            else:
-                return self.form_invalid(form)
-        return super().form_valid(form)
-"""
+        form.instance.uploaded_by = self.request.user
+        dataset = form.save()
+        json_file = self.request.FILES['json_file']
+        print("Nombre del archivo enviado:", json_file.name)
+        try:
+            data = json.load(json_data)
+        except json.JSONDecodeError as e:
+            return HttpResponseBadRequest("Error al cargar el JSON: {}".format(e))
 
+        if 'columns' in self.request.POST:
+            print("primero:")
+            selected_columns = self.request.POST.getlist('columns')
+            print("imprimo:", selected_columns)
+        else:
+            print("La clave 'columns' no está presente en request.POST")
+            return self.form_invalid(form)
+
+        try:
+            df = pd.read_json(data)
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest("El archivo no es un JSON válido.")
+
+
+        for column_name in selected_columns:
+            column_data = df[column_name]
+            print(column_name, column_data.dtype.name)
+            data_column_form = DataColumnForm({
+                'name': column_name,
+                'data_type': column_data.dtype.name
+            })
+            if data_column_form.is_valid():
+                data_column = data_column_form.save(commit=False)
+                data_column.dataset = dataset
+                data_column.save()
+            else:
+                print("¡Error al guardar la columna {}!".format(column_name))
+
+        return super().form_valid(form)
 
 class DataSetDetailView(DetailView):
     model = DataSet
