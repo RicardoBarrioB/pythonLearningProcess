@@ -58,10 +58,11 @@ class DataSetCreateView(LoginRequiredMixin, CreateView):
         form.instance.uploaded_by = self.request.user
         dataset = form.save()
         json_file = self.request.FILES['json_file']
-        print("Nombre del archivo enviado:", json_file.name)
+        print("Nombre del archivo enviado:", json_file.name,"xxxx")
         try:
-            data = json.load(json_data)
+            data = json.load(json_file)
         except json.JSONDecodeError as e:
+            print (e)
             return HttpResponseBadRequest("Error al cargar el JSON: {}".format(e))
 
         if 'columns' in self.request.POST:
