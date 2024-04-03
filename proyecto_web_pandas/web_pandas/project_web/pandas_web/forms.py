@@ -18,4 +18,10 @@ class DataSetForm(forms.ModelForm):
 class DataColumnForm(forms.ModelForm):
     class Meta:
         model = DataColumn
-        fields = ['name', 'data_type']
+        fields = ['name', 'data_type', 'data_set']
+
+
+class DataPointForm(forms.ModelForm):
+    class Meta:
+        model = DataPoint
+        fields = ['name', 'data_type', 'data_set']
