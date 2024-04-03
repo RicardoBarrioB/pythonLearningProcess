@@ -24,4 +24,4 @@ class DataColumnForm(forms.ModelForm):
 class DataPointForm(forms.ModelForm):
     class Meta:
         model = DataPoint
-        fields = ['name', 'data_type', 'data_set']
+        fields = ['column', 'value']
