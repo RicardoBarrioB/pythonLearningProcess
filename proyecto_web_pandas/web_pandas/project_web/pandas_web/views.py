@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.generic import *
 from django.urls import reverse_lazy
 import pandas as pd
+from jupyterlab_server import translator
+
 from .models import DataSet, DataColumn
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -53,14 +55,16 @@ class DataSetCreateView(LoginRequiredMixin, CreateView):
         else:
             return super().post(request, *args, **kwargs)
 
-
+    @transaction.atomic
     def form_valid(self, form):
         form.instance.uploaded_by = self.request.user
-        dataset = form.save()
+        dataset = form.save(commit=False)
+        dataset.save()
         json_file = self.request.FILES['json_file']
         print("Nombre del archivo enviado:", json_file.name,"xxxx")
         try:
-            data = json.load(json_file)
+            json_file.seek(0)
+            json_data = json.load(json_file)
         except json.JSONDecodeError as e:
             print (e)
             return HttpResponseBadRequest("Error al cargar el JSON: {}".format(e))
@@ -74,21 +78,21 @@ class DataSetCreateView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
         try:
-            df = pd.read_json(data)
+            key = next(iter(json_data.keys()))
+            df = pd.DataFrame(json_data[key])
         except json.JSONDecodeError:
             return HttpResponseBadRequest("El archivo no es un JSON válido.")
-
 
         for column_name in selected_columns:
             column_data = df[column_name]
             print(column_name, column_data.dtype.name)
             data_column_form = DataColumnForm({
                 'name': column_name,
-                'data_type': column_data.dtype.name
+                'data_type': column_data.dtype.name,
+                'data_set': dataset
             })
             if data_column_form.is_valid():
                 data_column = data_column_form.save(commit=False)
-                data_column.dataset = dataset
                 data_column.save()
             else:
                 print("¡Error al guardar la columna {}!".format(column_name))
