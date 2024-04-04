@@ -1,5 +1,5 @@
 from django import forms
-from .models import DataSet, DataColumn
+from .models import DataSet, DataColumn, DataPoint
 
 
 class DataSetForm(forms.ModelForm):

@@ -4,10 +4,10 @@ from django.urls import reverse_lazy
 import pandas as pd
 from jupyterlab_server import translator
 
-from .models import DataSet, DataColumn
+from .models import DataSet, DataColumn, DataPoint
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from .forms import DataSetForm, DataColumnForm
+from .forms import DataSetForm, DataColumnForm, DataPointForm
 import json
 from django.http import JsonResponse, HttpResponseBadRequest
 
@@ -97,8 +97,16 @@ class DataSetCreateView(LoginRequiredMixin, CreateView):
             else:
                 print("¡Error al guardar la columna {}!".format(column_name))
 
-
-
+            for value in column_data.tolist():
+                data_point_form = DataPointForm({
+                    'column': data_column,
+                    'value': value
+                })
+                if data_point_form.is_valid():
+                    data_point = data_point_form.save(commit=False)
+                    data_point.save()
+                else:
+                    print("¡Error al guardar el dato en la columna {}!".format(column_name))
 
         return super().form_valid(form)
 
