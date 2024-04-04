@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,6 +52,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'project_web.urls'
+
+MEDIA_ROOT = 'C:/sw/repositorio/pythonLearningProcess/proyecto_web_pandas/web_pandas/project_web/'
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
 
 TEMPLATES = [
     {

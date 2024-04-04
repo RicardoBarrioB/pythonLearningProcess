@@ -139,3 +139,10 @@ class DataSetDeleteView(DeleteView):
         dataset = get_object_or_404(DataSet, pk=pk)
         dataset.delete()
         return redirect('data_sets')
+
+
+def show_json(request, dataset_id):
+    dataset = DataSet.objects.get(pk=dataset_id)
+    with open(dataset.json_file.path, 'r') as file:
+        json_data = json.load(file)
+    return render(request, 'show_json.html', {'dataset': dataset, 'json_data': json_data})
